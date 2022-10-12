@@ -23,6 +23,9 @@ import data_util
 import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
+from pdb import set_trace as pb
+import numpy as np
+
 FLAGS = flags.FLAGS
 
 
@@ -62,17 +65,59 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       return image, label
 
     logging.info('num_input_pipelines: %d', input_context.num_input_pipelines)
-    dataset = builder.as_dataset(
+    # dataset = builder.as_dataset(
+    #     split=FLAGS.train_split if is_training else FLAGS.eval_split,
+    #     shuffle_files=is_training,
+    #     as_supervised=True,
+    #     # Passing the input_context to TFDS makes TFDS read different parts
+    #     # of the dataset on different workers. We also adjust the interleave
+    #     # parameters to achieve better performance.
+    #     read_config=tfds.ReadConfig(
+    #         interleave_cycle_length=32,
+    #         interleave_block_length=1,
+    #         input_context=input_context))
+    # =============================================================
+    if is_training: # is_training
+      dataset = builder.as_dataset(
         split=FLAGS.train_split if is_training else FLAGS.eval_split,
-        shuffle_files=is_training,
-        as_supervised=True,
-        # Passing the input_context to TFDS makes TFDS read different parts
-        # of the dataset on different workers. We also adjust the interleave
-        # parameters to achieve better performance.
-        read_config=tfds.ReadConfig(
-            interleave_cycle_length=32,
-            interleave_block_length=1,
-            input_context=input_context))
+        shuffle_files=False, as_supervised=False) # shuffle_files=is_training, as_supervised=True
+      
+      dataset = dataset.cache()
+      dataset_iter =  dataset.batch(2000) #tfds.as_numpy(dataset)
+      
+      ex_id = np.concatenate([x['id'] for x in dataset_iter])
+      ex_id_sorted = np.argsort(ex_id)
+      unsort = np.empty_like(ex_id_sorted)
+      unsort[ex_id_sorted] = np.arange(ex_id_sorted.size)
+
+      # dataset = dataset.shuffle()
+      all_exs_features = np.concatenate([x['image'] for x in dataset_iter])
+      all_exs_ind = np.concatenate([x['label'] for x in dataset_iter])
+      all_exs_ind_sorted = all_exs_ind[ex_id_sorted]
+      labels_per_class = 25
+      classes = 10
+
+      x = np.array(list(range(0, len(all_exs_ind))))
+      balanced_index = []
+      for i in range(classes):
+          y_p = all_exs_ind_sorted == i
+          np.random.seed(0)
+          y_i = np.random.choice(x[y_p], size=labels_per_class, replace=False)
+          balanced_index.append(y_i)
+      balanced_index = np.concatenate(balanced_index)
+      balanced_index = ex_id_sorted[balanced_index]
+      print('===============images chosen===============')
+      print(ex_id[balanced_index])
+      print('================images chosen================')
+      all_exs_ind= np.array([all_exs_ind[i] for i in balanced_index])
+      all_exs_features  = np.array([all_exs_features[i] for i in balanced_index])
+      dataset = tf.data.Dataset.from_tensor_slices((all_exs_features, all_exs_ind))
+    else:
+      dataset = builder.as_dataset(
+        split=FLAGS.train_split if is_training else FLAGS.eval_split,
+        shuffle_files=is_training, as_supervised=True) # shuffle_files=is_training, as_supervised=True
+    # =============================================================
+    
     if FLAGS.cache_dataset:
       dataset = dataset.cache()
     if is_training:
