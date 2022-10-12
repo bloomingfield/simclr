@@ -105,6 +105,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
           y_i = np.random.choice(x[y_p], size=labels_per_class, replace=False)
           balanced_index.append(y_i)
       balanced_index = np.concatenate(balanced_index)
+      balanced_index = np.sort(balanced_index)
       balanced_index = ex_id_sorted[balanced_index]
       print('===============images chosen===============')
       print(ex_id[balanced_index])
@@ -126,7 +127,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       options.experimental_slack = True
       dataset = dataset.with_options(options)
       buffer_multiplier = 50 if FLAGS.image_size <= 32 else 10
-      dataset = dataset.shuffle(batch_size * buffer_multiplier)
+      # dataset = dataset.shuffle(batch_size * buffer_multiplier)
       dataset = dataset.repeat(-1)
     dataset = dataset.map(
         map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)

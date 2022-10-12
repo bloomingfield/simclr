@@ -32,7 +32,6 @@ def add_supervised_loss(labels, logits):
                                                                   logits)
   # print(tf.executing_eagerly())
   # np.argmax(labels.numpy(), axis=1)
-  
   return tf.reduce_mean(losses)
 
 

@@ -28,6 +28,7 @@ import model as model_lib
 import objective as obj_lib
 import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
+import numpy as np
 
 from pdb import set_trace as pb
 
@@ -600,6 +601,9 @@ def main(argv):
           if FLAGS.train_mode == 'pretrain' and FLAGS.lineareval_while_pretraining:
             l = tf.concat([l, l], 0)
           sup_loss = obj_lib.add_supervised_loss(labels=l, logits=outputs)
+          # np.argmax(labels['labels'].numpy(), axis=1)
+          pb()
+          
           if loss is None:
             loss = sup_loss
           else:
