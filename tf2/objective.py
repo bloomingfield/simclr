@@ -23,12 +23,15 @@ FLAGS = flags.FLAGS
 
 LARGE_NUM = 1e9
 
+from pdb import set_trace as pb
 
 def add_supervised_loss(labels, logits):
   """Compute mean supervised loss over local batch."""
   losses = tf.keras.losses.CategoricalCrossentropy(
       from_logits=True, reduction=tf.keras.losses.Reduction.NONE)(labels,
                                                                   logits)
+  # print(tf.executing_eagerly())
+  # pb()
   return tf.reduce_mean(losses)
 
 

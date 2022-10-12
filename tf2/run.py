@@ -29,6 +29,7 @@ import objective as obj_lib
 import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
+from pdb import set_trace as pb
 
 
 FLAGS = flags.FLAGS
@@ -272,7 +273,7 @@ def build_saved_model(model, include_projection_head=True):
       # a getter with the same name.
       self.trainable_variables_list = model.trainable_variables
 
-    @tf.function
+    # @tf.function
     def __call__(self, inputs, trainable):
       self.model(inputs, training=trainable)
       return get_salient_tensors_dict(include_projection_head)
@@ -386,7 +387,7 @@ def perform_evaluation(model, builder, eval_steps, ckpt, strategy, topology):
 
   with strategy.scope():
 
-    @tf.function
+    # @tf.function
     def run_single_step(iterator):
       images, labels = next(iterator)
       features, labels = images, {'labels': labels}
@@ -623,7 +624,7 @@ def main(argv):
 
     with strategy.scope():
 
-      @tf.function
+      # @tf.function
       def train_multiple_steps(iterator):
         # `tf.range` is needed so that this runs in a `tf.while_loop` and is
         # not unrolled.
@@ -635,6 +636,7 @@ def main(argv):
           with tf.name_scope(''):
             images, labels = next(iterator)
             features, labels = images, {'labels': labels}
+            # print(labels)
             strategy.run(single_step, (features, labels))
 
       global_step = optimizer.iterations

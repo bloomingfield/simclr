@@ -23,6 +23,9 @@ import lars_optimizer
 import resnet
 import tensorflow.compat.v2 as tf
 
+from pdb import set_trace as pb
+
+
 FLAGS = flags.FLAGS
 
 
@@ -268,6 +271,7 @@ class Model(tf.keras.models.Model):
     if FLAGS.train_mode == 'finetune':
       supervised_head_outputs = self.supervised_head(supervised_head_inputs,
                                                      training)
+
       return None, supervised_head_outputs
     elif FLAGS.train_mode == 'pretrain' and FLAGS.lineareval_while_pretraining:
       # When performing pretraining and linear evaluation together we do not
