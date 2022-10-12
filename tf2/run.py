@@ -280,9 +280,9 @@ def build_saved_model(model, include_projection_head=True):
       return get_salient_tensors_dict(include_projection_head)
 
   module = SimCLRModel(model)
-  input_spec = tf.TensorSpec(shape=[None, None, None, 3], dtype=tf.float32)
-  module.__call__.get_concrete_function(input_spec, trainable=True)
-  module.__call__.get_concrete_function(input_spec, trainable=False)
+  # input_spec = tf.TensorSpec(shape=[None, None, None, 3], dtype=tf.float32)
+  # module.__call__.get_concrete_function(input_spec, trainable=True)
+  # module.__call__.get_concrete_function(input_spec, trainable=False)
   return module
 
 
@@ -602,7 +602,7 @@ def main(argv):
             l = tf.concat([l, l], 0)
           sup_loss = obj_lib.add_supervised_loss(labels=l, logits=outputs)
           # np.argmax(labels['labels'].numpy(), axis=1)
-          pb()
+          # pb()
           
           if loss is None:
             loss = sup_loss
@@ -647,10 +647,17 @@ def main(argv):
       cur_step = global_step.numpy()
       iterator = iter(ds)
       while cur_step < train_steps:
+        pb()
         # Calls to tf.summary.xyz lookup the summary writer resource which is
         # set by the summary writer's context manager.
         with summary_writer.as_default():
-          train_multiple_steps(iterator)
+          # train_multiple_steps(iterator)
+          # =======================================
+          images, labels = next(iterator)
+          features, labels = images, {'labels': labels}
+          # print(labels)
+          strategy.run(single_step, (features, labels))
+          # =======================================
           cur_step = global_step.numpy()
           checkpoint_manager.save(cur_step)
           logging.info('Completed: %d / %d steps', cur_step, train_steps)
