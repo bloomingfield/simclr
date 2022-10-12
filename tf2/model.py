@@ -243,6 +243,7 @@ class Model(tf.keras.models.Model):
 
   def __call__(self, inputs, training):
     features = inputs
+    
     if training and FLAGS.train_mode == 'pretrain':
       if FLAGS.fine_tune_after_block > -1:
         raise ValueError('Does not support layer freezing during pretraining,'
@@ -271,7 +272,6 @@ class Model(tf.keras.models.Model):
     if FLAGS.train_mode == 'finetune':
       supervised_head_outputs = self.supervised_head(supervised_head_inputs,
                                                      training)
-
       return None, supervised_head_outputs
     elif FLAGS.train_mode == 'pretrain' and FLAGS.lineareval_while_pretraining:
       # When performing pretraining and linear evaluation together we do not

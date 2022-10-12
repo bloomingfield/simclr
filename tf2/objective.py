@@ -31,7 +31,8 @@ def add_supervised_loss(labels, logits):
       from_logits=True, reduction=tf.keras.losses.Reduction.NONE)(labels,
                                                                   logits)
   # print(tf.executing_eagerly())
-  # pb()
+  # np.argmax(labels.numpy(), axis=1)
+  
   return tf.reduce_mean(losses)
 
 
