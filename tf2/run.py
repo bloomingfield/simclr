@@ -611,18 +611,21 @@ def main(argv):
           metrics.update_finetune_metrics_train(supervised_loss_metric,
                                                 supervised_acc_metric, sup_loss,
                                                 l, outputs)
+        
         weight_decay = model_lib.add_weight_decay(
             model, adjust_per_optimizer=True)
         weight_decay_metric.update_state(weight_decay)
+        # pb()
         loss += weight_decay
         total_loss_metric.update_state(loss)
         # The default behavior of `apply_gradients` is to sum gradients from all
         # replicas so we divide the loss by the number of replicas so that the
         # mean gradient is applied.
         loss = loss / strategy.num_replicas_in_sync
-        logging.info('Trainable variables:')
-        for var in model.trainable_variables:
-          logging.info(var.name)
+        if False:
+            logging.info('Trainable variables:')
+            for var in model.trainable_variables:
+              logging.info(var.name)
         grads = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
 

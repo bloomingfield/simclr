@@ -267,10 +267,8 @@ class Model(tf.keras.models.Model):
 
     # Base network forward pass.
     hiddens = self.resnet_model(features, training=training)
-
     # Add heads.
-    projection_head_outputs, supervised_head_inputs = self._projection_head(
-        hiddens, training)
+    projection_head_outputs, supervised_head_inputs = self._projection_head(hiddens, training)
 
     if FLAGS.train_mode == 'finetune':
       supervised_head_outputs = self.supervised_head(supervised_head_inputs,

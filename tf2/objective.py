@@ -24,6 +24,7 @@ FLAGS = flags.FLAGS
 LARGE_NUM = 1e9
 
 from pdb import set_trace as pb
+import numpy as np
 
 def add_supervised_loss(labels, logits):
   """Compute mean supervised loss over local batch."""
