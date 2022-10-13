@@ -834,15 +834,7 @@ def resnet(resnet_depth,
     raise ValueError('Not a valid resnet_depth:', resnet_depth)
 
   params = model_params[resnet_depth]
-  return Resnet(
-      params['block'],
-      params['layers'],
-      width_multiplier,
-      cifar_stem=cifar_stem,
-      dropblock_keep_probs=dropblock_keep_probs,
-      dropblock_size=dropblock_size,
-      data_format=data_format)
-  # return ResnetMini(
+  # return Resnet(
   #     params['block'],
   #     params['layers'],
   #     width_multiplier,
@@ -850,3 +842,11 @@ def resnet(resnet_depth,
   #     dropblock_keep_probs=dropblock_keep_probs,
   #     dropblock_size=dropblock_size,
   #     data_format=data_format)
+  return ResnetMini(
+      params['block'],
+      params['layers'],
+      width_multiplier,
+      cifar_stem=cifar_stem,
+      dropblock_keep_probs=dropblock_keep_probs,
+      dropblock_size=dropblock_size,
+      data_format=data_format)
