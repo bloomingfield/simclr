@@ -774,12 +774,12 @@ class ResnetMini(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
               strides=1,
               data_format=data_format,
               trainable=trainable))
-      # self.initial_conv_relu_max_pool.append(
-      #     IdentityLayer(name='initial_conv', trainable=trainable))
-      # self.initial_conv_relu_max_pool.append(
-      #     BatchNormRelu(data_format=data_format, trainable=trainable))
-      # self.initial_conv_relu_max_pool.append(
-      #     IdentityLayer(name='initial_max_pool', trainable=trainable))
+      self.initial_conv_relu_max_pool.append(
+          IdentityLayer(name='initial_conv', trainable=trainable))
+      self.initial_conv_relu_max_pool.append(
+          BatchNormRelu(data_format=data_format, trainable=trainable))
+      self.initial_conv_relu_max_pool.append(
+          IdentityLayer(name='initial_max_pool', trainable=trainable))
 
   def call(self, inputs, training):
     for layer in self.initial_conv_relu_max_pool:
