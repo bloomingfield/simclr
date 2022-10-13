@@ -19,7 +19,7 @@ python run.py --mode=train_then_eval --train_mode=finetune \
   --fine_tune_after_block=-1 --zero_init_logits_layer=True \
   --optimizer=momentum --learning_rate=0.005 \
   --learning_rate_scaling=sqrt --weight_decay=0 --image_size=32  --resnet_depth=18  --global_bn=False --use_blur=False \
-  --train_steps=1 --train_batch_size=1024 --warmup_epochs=0 \
+  --train_steps=10 --train_batch_size=1024 --eval_batch_size=1024 --warmup_epochs=0 \
   --dataset=cifar10 --eval_split=test \
   --data_dir=data/cifar10 --model_dir=cifar10_models/sup \
   --use_tpu=False \

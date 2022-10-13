@@ -22,10 +22,39 @@ Residual networks (ResNets) were proposed in:
 
 from absl import flags
 import tensorflow.compat.v2 as tf
-
+from pdb import set_trace as pb
+import numpy as np
 
 FLAGS = flags.FLAGS
 BATCH_NORM_EPSILON = 1e-5
+
+class DiracInitializer(tf.keras.initializers.Initializer):
+
+  def __init__(self, groups=1):
+    self.groups = groups
+
+  def __call__(self, shape, dtype=None, **kwargs):
+    shape = tuple(reversed(shape))
+    dimensions = len(shape)
+    out_chans_per_grp = shape[0] // self.groups
+    min_dim = min(out_chans_per_grp, shape[1])
+    tensor = np.zeros(shape)
+    for g in range(self.groups):
+      for d in range(min_dim):
+        if dimensions == 3:  # Temporal convolution
+            tensor[g * out_chans_per_grp + d, d, tensor.shape[2] // 2] = 1
+        elif dimensions == 4:  # Spatial convolution
+            tensor[g * out_chans_per_grp + d, d, tensor.shape[2] // 2, tensor.shape[3] // 2] = 1
+        else:  # Volumetric convolution
+            tensor[g * out_chans_per_grp + d, d, tensor.shape(2) // 2,
+                   tensor.shape[3] // 2, tensor.shape[4] // 2] = 1
+    tensor = tensor.transpose()
+    tensor = tf.convert_to_tensor(tensor, dtype=dtype)
+    return tensor
+
+  def get_config(self):  # To support serialization
+    return {"groups": self.groups}
+
 
 
 class BatchNormRelu(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
@@ -200,7 +229,9 @@ class Conv2dFixedPadding(tf.keras.layers.Layer):  # pylint: disable=missing-docs
         padding=('SAME' if strides == 1 else 'VALID'),
         use_bias=False,
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
-        kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
+        kernel_initializer=DiracInitializer(),
         data_format=data_format)
 
   def call(self, inputs, training):
@@ -246,7 +277,9 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         kernel_size=1,
         strides=1,
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
-        kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
+        kernel_initializer=DiracInitializer(),
         use_bias=False,
         data_format=data_format)
     self.batch_norm_relu_1 = BatchNormRelu(data_format=data_format)
@@ -255,7 +288,9 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         kernel_size=1,
         strides=1,
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
-        kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
+        kernel_initializer=DiracInitializer(),
         use_bias=False,
         data_format=data_format)
 
@@ -291,7 +326,9 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         kernel_size=[1, 1],
         strides=[1, 1],
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
-        kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
+        kernel_initializer=DiracInitializer(),
         padding='same',
         data_format=data_format,
         use_bias=True)
@@ -300,7 +337,9 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         kernel_size=[1, 1],
         strides=[1, 1],
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
-        kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Ones(),
+        # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
+        kernel_initializer=DiracInitializer(),
         padding='same',
         data_format=data_format,
         use_bias=True)
