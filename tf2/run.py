@@ -179,7 +179,7 @@ flags.DEFINE_integer(
     'Maximum number of checkpoints to keep.')
 
 flags.DEFINE_integer(
-    'keep_hub_module_max', 1,
+    'keep_hub_module_max', 0,
     'Maximum number of Hub modules to keep.')
 
 flags.DEFINE_float(
@@ -647,7 +647,6 @@ def main(argv):
       cur_step = global_step.numpy()
       iterator = iter(ds)
       while cur_step < train_steps:
-        pb()
         # Calls to tf.summary.xyz lookup the summary writer resource which is
         # set by the summary writer's context manager.
         with summary_writer.as_default():
