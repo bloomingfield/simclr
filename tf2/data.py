@@ -94,25 +94,31 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       all_exs_features = np.concatenate([x['image'] for x in dataset_iter])
       all_exs_ind = np.concatenate([x['label'] for x in dataset_iter])
       all_exs_ind_sorted = all_exs_ind[ex_id_sorted]
-      labels_per_class = 25
-      classes = 10
+      
+      if FLAGS.train_mode == 'finetune':
+        labels_per_class = 25
+        classes = 10
 
-      x = np.array(list(range(0, len(all_exs_ind))))
-      balanced_index = []
-      for i in range(classes):
-          y_p = all_exs_ind_sorted == i
-          np.random.seed(0)
-          y_i = np.random.choice(x[y_p], size=labels_per_class, replace=False)
-          balanced_index.append(y_i)
-      balanced_index = np.concatenate(balanced_index)
-      balanced_index = np.sort(balanced_index)
-      balanced_index = ex_id_sorted[balanced_index]
-      print('===============images chosen===============')
-      print(ex_id[balanced_index])
-      print('================images chosen================')
-      all_exs_ind= np.array([all_exs_ind[i] for i in balanced_index])
-      all_exs_features  = np.array([all_exs_features[i] for i in balanced_index])
-      dataset = tf.data.Dataset.from_tensor_slices((all_exs_features, all_exs_ind))
+        x = np.array(list(range(0, len(all_exs_ind))))
+        balanced_index = []
+        for i in range(classes):
+            y_p = all_exs_ind_sorted == i
+            np.random.seed(0)
+            y_i = np.random.choice(x[y_p], size=labels_per_class, replace=False)
+            balanced_index.append(y_i)
+        balanced_index = np.concatenate(balanced_index)
+        balanced_index = np.sort(balanced_index)
+        balanced_index = ex_id_sorted[balanced_index]
+        print('===============images chosen===============')
+        print(ex_id[balanced_index])
+        print('================images chosen================')
+        all_exs_ind= np.array([all_exs_ind[i] for i in balanced_index])
+        all_exs_features  = np.array([all_exs_features[i] for i in balanced_index])
+        dataset = tf.data.Dataset.from_tensor_slices((all_exs_features, all_exs_ind))
+      else:
+        all_exs_ind= all_exs_ind[ex_id_sorted]
+        all_exs_features  = all_exs_features[ex_id_sorted]
+        dataset = tf.data.Dataset.from_tensor_slices((all_exs_features, all_exs_ind))
     else:
       dataset = builder.as_dataset(
         split=FLAGS.train_split if is_training else FLAGS.eval_split,
