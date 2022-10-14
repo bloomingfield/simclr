@@ -265,6 +265,11 @@ class Model(tf.keras.models.Model):
                                                   FLAGS.image_size)
     features = tf.concat(features_list, 0)  # (num_transforms * bsz, h, w, c)
 
+    # # ========================================
+    # tf.summary.image("example images", features[:2], step=0)
+    # # ========================================
+    # pb()
+
     # Base network forward pass.
     hiddens = self.resnet_model(features, training=training)
     # Add heads.

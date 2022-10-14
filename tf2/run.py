@@ -574,8 +574,7 @@ def main(argv):
         should_record = tf.equal((optimizer.iterations + 1) % steps_per_loop, 0)
         with tf.summary.record_if(should_record):
           # Only log augmented images for the first tower.
-          tf.summary.image(
-              'image', features[:, :, :, :3], step=optimizer.iterations + 1)
+          tf.summary.image('image', features[:, :, :, :3], step=optimizer.iterations + 1)
         projection_head_outputs, supervised_head_outputs = model(
             features, training=True)
         loss = None
@@ -654,13 +653,15 @@ def main(argv):
         # Calls to tf.summary.xyz lookup the summary writer resource which is
         # set by the summary writer's context manager.
         with summary_writer.as_default():
-          # train_multiple_steps(iterator)
-          # =======================================
-          images, labels = next(iterator)
-          features, labels = images, {'labels': labels}
-          # print(labels)
-          strategy.run(single_step, (features, labels))
-          # =======================================
+          if FLAGS.train_steps == 0:
+            train_multiple_steps(iterator)
+          else:
+            # =======================================
+            images, labels = next(iterator)
+            features, labels = images, {'labels': labels}
+            # print(labels)
+            strategy.run(single_step, (features, labels))
+            # =======================================
           cur_step = global_step.numpy()
           checkpoint_manager.save(cur_step)
           logging.info('Completed: %d / %d steps', cur_step, train_steps)
