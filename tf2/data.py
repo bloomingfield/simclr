@@ -24,6 +24,7 @@ import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
 from pdb import set_trace as pb
+import pydevd
 import numpy as np
 
 FLAGS = flags.FLAGS
@@ -54,6 +55,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
 
     def map_fn(image, label):
       """Produces multiple transformations of the same batch."""
+      # pb()
       if is_training and FLAGS.train_mode == 'pretrain':
         xs = []
         for _ in range(2):  # Two transformations
@@ -94,7 +96,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       all_exs_features = np.concatenate([x['image'] for x in dataset_iter])
       all_exs_ind = np.concatenate([x['label'] for x in dataset_iter])
       all_exs_ind_sorted = all_exs_ind[ex_id_sorted]
-      
+
       if FLAGS.train_mode == 'finetune':
         labels_per_class = 25
         classes = 10
@@ -135,8 +137,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       buffer_multiplier = 50 if FLAGS.image_size <= 32 else 10
       # dataset = dataset.shuffle(batch_size * buffer_multiplier)
       dataset = dataset.repeat(-1)
-    dataset = dataset.map(
-        map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset = dataset.map(map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE) # , num_parallel_calls=tf.data.experimental.AUTOTUNE
     dataset = dataset.batch(batch_size, drop_remainder=is_training)
     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     return dataset
