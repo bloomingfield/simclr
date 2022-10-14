@@ -68,9 +68,9 @@ def color_jitter(image, strength, random_order=True, impl='simclrv2'):
     The distorted image tensor.
   """
   brightness = 0.8 * strength
-  contrast = 0.0 * strength
-  saturation = 0.0 * strength
-  hue = 0.0 * strength
+  contrast = 0.8 * strength
+  saturation = 0.8 * strength
+  hue = 0.2 * strength
   if random_order:
     return color_jitter_rand(
         image, brightness, contrast, saturation, hue, impl=impl)
@@ -390,7 +390,7 @@ def random_color_jitter(image, p=1.0, strength=1.0,
     color_jitter_t = functools.partial(
         color_jitter, strength=strength, impl=impl)
     image = random_apply(color_jitter_t, p=0.8, x=image)
-    # image = random_apply(to_grayscale, p=0.2, x=image)
+    image = random_apply(to_grayscale, p=0.2, x=image)
     return image
   return random_apply(_transform, p=p, x=image)
 
@@ -467,10 +467,10 @@ def preprocess_for_train(image,
   Returns:
     A preprocessed image `Tensor`.
   """
-  if False:
+  if True:
     if crop:
       image = random_crop_with_resize(image, height, width)
-  if False:
+  if True:
     if flip:
       image = tf.image.random_flip_left_right(image)
   if True:
