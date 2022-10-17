@@ -6,6 +6,7 @@ import tensorflow.compat.v2 as tf
 import numpy as np
 import torch
 from torchvision.transforms import functional_tensor as F_t
+from albumentations.augmentations import functional as F_A
 
 np.random.seed(0)
 imarray = np.random.rand(100,100,3)
@@ -24,7 +25,14 @@ image = tf.clip_by_value(image, 0., 1.)
 # pytorch change brightness
 image_pt = F_t.adjust_brightness(imarray_pt.T.clone(), factor).T
 
+#===================================
+# albumentations change brightness
+pb()
+image_A = F_A.adjust_brightness_torchvision(imarray_pt.T.numpy(), factor).T
+
+
 print(np.abs(image_pt.numpy() - image.numpy()).sum())
+print(np.abs(image_A.numpy() - image.numpy()).sum())
 
 # ==========================
 # TF change hue

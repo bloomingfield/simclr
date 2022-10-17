@@ -120,7 +120,10 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       else:
         all_exs_ind= all_exs_ind[ex_id_sorted]
         all_exs_features  = all_exs_features[ex_id_sorted]
-        dataset = tf.data.Dataset.from_tensor_slices((all_exs_features, all_exs_ind))
+
+        rng = np.random.default_rng(10)
+        permute = rng.permutation(ex_id_sorted.shape[0])
+        dataset = tf.data.Dataset.from_tensor_slices((all_exs_features[permute], all_exs_ind[permute]))
     else:
       dataset = builder.as_dataset(
         split=FLAGS.train_split if is_training else FLAGS.eval_split,

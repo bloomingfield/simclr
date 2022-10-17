@@ -107,6 +107,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
             tf.where(tf.greater(g_norm, 0), (self.eeta * w_norm / g_norm), 1.0),
             1.0)
       scaled_lr = learning_rate * trust_ratio
+      # pb()
 
       next_v = tf.multiply(self.momentum, v) + scaled_lr * grad
       if self.use_nesterov:
