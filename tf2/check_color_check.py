@@ -27,12 +27,12 @@ image_pt = F_t.adjust_brightness(imarray_pt.T.clone(), factor).T
 
 #===================================
 # albumentations change brightness
-pb()
-image_A = F_A.adjust_brightness_torchvision(imarray_pt.T.numpy(), factor).T
+image_A = F_A.adjust_brightness_torchvision(imarray_pt.T.numpy().astype(np.float32), factor).T
 
-
-print(np.abs(image_pt.numpy() - image.numpy()).sum())
-print(np.abs(image_A.numpy() - image.numpy()).sum())
+print('brightness: pytorch vs tf')
+print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
+print('brightness: albumentations vs tf')
+print((np.abs(image_A - image.numpy()) > 1e-6).sum())
 
 # ==========================
 # TF change hue
@@ -42,8 +42,14 @@ image = tf.clip_by_value(image, 0., 1.)
 #===================================
 # pytorch change hue
 image_pt = F_t.adjust_hue(imarray_pt.T.clone(), factor).T
+#===================================
+# albumentations change hue
+image_A = F_A.adjust_hue_torchvision(imarray_pt.numpy().astype(np.float32), factor)
 
-print(np.abs(image_pt.numpy() - image.numpy()).sum())
+print('hue: pytorch vs tf')
+print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
+print('hue: albumentations vs tf')
+print((np.abs(image_A - image.numpy()) > 1e-6).sum())
 #===================================
 
 # ==========================
@@ -54,8 +60,16 @@ image = tf.clip_by_value(image, 0., 1.)
 #===================================
 # pytorch change contrast
 image_pt = F_t.adjust_contrast(imarray_pt.T.clone(), factor).T
+#===================================
+# albumentations change contrast
+image_A = F_A.adjust_contrast_torchvision(imarray_pt.numpy().astype(np.float32), factor)
 
-print(np.abs(image_pt.numpy() - image.numpy()).sum())
+print('contrast: pytorch vs tf')
+print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
+print('contrast: albumentations vs tf')
+print((np.abs(image_A - image.numpy()) > 1e-6).sum())
+print('contrast: albumentations vs pytorch')
+print((np.abs(image_A - image_pt.numpy()) > 1e-6).sum())
 #===================================
 
 # ==========================
@@ -66,7 +80,15 @@ image = tf.clip_by_value(image, 0., 1.)
 #===================================
 # pytorch change saturation
 image_pt = F_t.adjust_saturation(imarray_pt.T.clone(), factor).T
-
-print(np.abs(image_pt.numpy() - image.numpy()).sum())
 #===================================
+# albumentations change saturation
+image_A = F_A.adjust_contrast_torchvision(imarray_pt.numpy().astype(np.float32), factor)
 
+print('saturation: pytorch vs tf')
+print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
+print('saturation: albumentations vs tf')
+print((np.abs(image_A - image.numpy()) > 1e-6).sum())
+print('saturation: albumentations vs pytorch')
+print((np.abs(image_A - image_pt.numpy()) > 1e-6).sum())
+#===================================
+pb()

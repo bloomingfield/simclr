@@ -103,10 +103,10 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
 
         x = np.array(list(range(0, len(all_exs_ind))))
         balanced_index = []
+        rng = np.random.default_rng(0)
         for i in range(classes):
             y_p = all_exs_ind_sorted == i
-            np.random.seed(0)
-            y_i = np.random.choice(x[y_p], size=labels_per_class, replace=False)
+            y_i = rng.choice(x[y_p], size=labels_per_class, replace=False)
             balanced_index.append(y_i)
         balanced_index = np.concatenate(balanced_index)
         balanced_index = np.sort(balanced_index)

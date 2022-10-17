@@ -58,6 +58,7 @@ def add_contrastive_loss(hidden,
   # np.random.seed(0)
   # imarray = np.random.rand(512,64).astype(dtype="float32")
   # hidden = tf.convert_to_tensor(imarray)
+  hidden = tf.cast(hidden, tf.double)
 
   if hidden_norm:
     hidden = tf.math.l2_normalize(hidden, -1)
@@ -81,6 +82,7 @@ def add_contrastive_loss(hidden,
     hidden2_large = hidden2
     labels = tf.one_hot(tf.range(batch_size), batch_size * 2)
     masks = tf.one_hot(tf.range(batch_size), batch_size)
+  masks = tf.cast(masks, tf.double)
   
   logits_aa = tf.matmul(hidden1, hidden1_large, transpose_b=True) / temperature
   logits_aa = logits_aa - masks * LARGE_NUM
@@ -98,7 +100,8 @@ def add_contrastive_loss(hidden,
   print(loss)
   print(tf.math.reduce_min(loss_a + loss_b))
   print(tf.math.reduce_max(loss_a + loss_b))
-  # pb()
+  pb()
+  loss = tf.cast(loss, tf.float32)
 
   return loss, logits_ab, labels
 

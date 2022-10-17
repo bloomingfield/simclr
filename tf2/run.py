@@ -684,5 +684,7 @@ if __name__ == '__main__':
   tf.compat.v1.enable_v2_behavior()
   # For outside compilation of summaries on TPU.
   tf.config.set_soft_device_placement(True)
+  os.environ["TF_DETERMINISTIC_OPS"] = "1"
+  tf.random.set_seed(1)
   # tf.data.experimental.enable_debug_mode()
   app.run(main)
