@@ -91,7 +91,10 @@ class Conv2dFixedPadding(tf.keras.layers.Layer):  # pylint: disable=missing-docs
 
 def conv(in_channels, out_channels, kernel_size=3, stride=1, bias=False):
     convolution = nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size,
-                     stride=stride, padding = (kernel_size - 1) // 2, bias=bias)
+                     stride=stride, 
+                     padding = (kernel_size - 1) // 2,
+                     # padding = ('same' if stride == 1 else 'valid'), 
+                     bias=bias)
     # padding = (kernel_size - 1) // 2
     # padding=('SAME' if stride == 1 else 'VALID')
     # variance_scaling_initializer(convolution.weight)
@@ -103,7 +106,7 @@ def conv(in_channels, out_channels, kernel_size=3, stride=1, bias=False):
         torch.nn.init.zeros_(convolution.bias)
     return convolution
 
-kernel =3 # either 1 3 or 7
+kernel =1 # either 1 3 or 7
 stride = 1 # either 1 or 2
 
 tf_conv = Conv2dFixedPadding(10,kernel,stride,data_format='channels_last')
@@ -123,6 +126,6 @@ res_py = py_conv(imarray_pt).squeeze().T[None, :, :, :].float()
 res = res_tf.numpy()-res_py.detach().numpy()
 
 
-print(np.abs(res).sum())
+print((np.abs(res) > 1e-6).sum())
 
 # pb()
