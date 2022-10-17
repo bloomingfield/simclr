@@ -626,7 +626,6 @@ def main(argv):
             for var in model.trainable_variables:
               logging.info(var.name)
         grads = tape.gradient(loss, model.trainable_variables)
-        pb()
         optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
     with strategy.scope():

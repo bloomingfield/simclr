@@ -54,6 +54,11 @@ def add_contrastive_loss(hidden,
     The labels for contrastive prediction task.
   """
   # Get (normalized) hidden1 and hidden2.
+
+  # np.random.seed(0)
+  # imarray = np.random.rand(512,64).astype(dtype="float32")
+  # hidden = tf.convert_to_tensor(imarray)
+
   if hidden_norm:
     hidden = tf.math.l2_normalize(hidden, -1)
   hidden1, hidden2 = tf.split(hidden, 2, 0)
@@ -76,7 +81,7 @@ def add_contrastive_loss(hidden,
     hidden2_large = hidden2
     labels = tf.one_hot(tf.range(batch_size), batch_size * 2)
     masks = tf.one_hot(tf.range(batch_size), batch_size)
-
+  
   logits_aa = tf.matmul(hidden1, hidden1_large, transpose_b=True) / temperature
   logits_aa = logits_aa - masks * LARGE_NUM
   logits_bb = tf.matmul(hidden2, hidden2_large, transpose_b=True) / temperature
@@ -89,6 +94,11 @@ def add_contrastive_loss(hidden,
   loss_b = tf.nn.softmax_cross_entropy_with_logits(
       labels, tf.concat([logits_ba, logits_bb], 1))
   loss = tf.reduce_mean(loss_a + loss_b)
+  print('====================================')
+  print(loss)
+  print(tf.math.reduce_min(loss_a + loss_b))
+  print(tf.math.reduce_max(loss_a + loss_b))
+  # pb()
 
   return loss, logits_ab, labels
 

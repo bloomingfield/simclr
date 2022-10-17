@@ -155,8 +155,9 @@ class LinearLayer(tf.keras.layers.Layer):
   def call(self, inputs, training):
     assert inputs.shape.ndims == 2, inputs.shape
     inputs = self.dense(inputs)
-    if self.use_bn:
-      inputs = self.bn_relu(inputs, training=training)
+    # if self.use_bn:
+    #   inputs = self.bn_relu(inputs, training=training)
+    pb()
     return inputs
 
 
@@ -195,6 +196,7 @@ class ProjectionHead(tf.keras.layers.Layer):
           FLAGS.proj_head_mode))
     super(ProjectionHead, self).__init__(**kwargs)
 
+
   def call(self, inputs, training):
     if FLAGS.proj_head_mode == 'none':
       return inputs  # directly use the output hiddens as hiddens
@@ -216,6 +218,7 @@ class ProjectionHead(tf.keras.layers.Layer):
     # The first element is the output of the projection head.
     # The second element is the input of the finetune head.
     proj_head_output = tf.identity(hiddens_list[-1], 'proj_head_output')
+
     return proj_head_output, hiddens_list[FLAGS.ft_proj_selector]
 
 
