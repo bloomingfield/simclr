@@ -8,8 +8,12 @@ import torch
 from torchvision.transforms import functional_tensor as F_t
 from albumentations.augmentations import functional as F_A
 
+from check_color_check_helper import *
+
+
+
 np.random.seed(0)
-imarray = np.random.rand(100,100,3)
+imarray = np.random.rand(256,256,3)
 
 imarray_tf = tf.convert_to_tensor(imarray)
 imarray_pt = torch.tensor(imarray)
@@ -63,6 +67,9 @@ image_pt = F_t.adjust_contrast(imarray_pt.T.clone(), factor).T
 #===================================
 # albumentations change contrast
 image_A = F_A.adjust_contrast_torchvision(imarray_pt.numpy().astype(np.float32), factor)
+#===================================
+# custom change contrast
+image_c = adjust_contrast(tf.identity(imarray_tf), factor)
 
 print('contrast: pytorch vs tf')
 print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
@@ -70,6 +77,8 @@ print('contrast: albumentations vs tf')
 print((np.abs(image_A - image.numpy()) > 1e-6).sum())
 print('contrast: albumentations vs pytorch')
 print((np.abs(image_A - image_pt.numpy()) > 1e-6).sum())
+print('contrast: custom vs tf')
+print((np.abs(image_c - image.numpy()) > 1e-6).sum())
 #===================================
 
 # ==========================
@@ -83,6 +92,9 @@ image_pt = F_t.adjust_saturation(imarray_pt.T.clone(), factor).T
 #===================================
 # albumentations change saturation
 image_A = F_A.adjust_contrast_torchvision(imarray_pt.numpy().astype(np.float32), factor)
+#===================================
+# custom change saturation
+image_c = adjust_saturation(tf.identity(imarray_tf).numpy(), factor)
 
 print('saturation: pytorch vs tf')
 print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
@@ -90,5 +102,7 @@ print('saturation: albumentations vs tf')
 print((np.abs(image_A - image.numpy()) > 1e-6).sum())
 print('saturation: albumentations vs pytorch')
 print((np.abs(image_A - image_pt.numpy()) > 1e-6).sum())
+print('saturation: custom vs tf')
+print((np.abs(image_c - image.numpy()) > 1e-6).sum())
 #===================================
 pb()
