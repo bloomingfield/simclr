@@ -105,4 +105,18 @@ print((np.abs(image_A - image_pt.numpy()) > 1e-6).sum())
 print('saturation: custom vs tf')
 print((np.abs(image_c - image.numpy()) > 1e-6).sum())
 #===================================
+
+# ==========================
+# TF greyscale
+image = tf.image.rgb_to_grayscale(tf.identity(imarray_tf))
+image = tf.clip_by_value(image, 0., 1.)
+#===================================
+# pytorch greyscale
+image_pt = F_t.rgb_to_grayscale(imarray_pt.T.clone(), num_output_channels=1).T
+#===================================
+print('greyscale: pytorch vs tf')
+print((np.abs(image_pt.numpy() - image.numpy()) > 1e-6).sum())
+#===================================
+
+
 pb()
