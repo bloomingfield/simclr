@@ -100,3 +100,34 @@ def adjust_saturation(image, saturation_factor, name=None):
 
     return convert_image_dtype(adjusted, orig_dtype)
 
+def sample_distorted_bounding_box_v2(image_size,
+                                     bounding_boxes,
+                                     seed=0,
+                                     min_object_covered=0.1,
+                                     aspect_ratio_range=None,
+                                     area_range=None,
+                                     max_attempts=None,
+                                     use_image_if_no_bounding_boxes=None,
+                                     name=None):
+  if seed:
+    seed1, seed2 = random_seed.get_seed(seed)
+  else:
+    if config.is_op_determinism_enabled():
+      raise ValueError(
+          f'tf.image.sample_distorted_bounding_box requires a non-zero seed to '
+          f'be passed in when determinism is enabled, but got seed={seed}. '
+          f'Please pass in a non-zero seed, e.g. by passing "seed=1".')
+    seed1, seed2 = (0, 0)
+  with ops.name_scope(name, 'sample_distorted_bounding_box'):
+    return gen_image_ops.sample_distorted_bounding_box_v2(
+        image_size,
+        bounding_boxes,
+        seed=seed1,
+        seed2=seed2,
+        min_object_covered=min_object_covered,
+        aspect_ratio_range=aspect_ratio_range,
+        area_range=area_range,
+        max_attempts=max_attempts,
+        use_image_if_no_bounding_boxes=use_image_if_no_bounding_boxes,
+        name=name) 
+

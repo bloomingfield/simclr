@@ -100,4 +100,8 @@ def sample_box_tf(image):
       max_attempts=max_attempts,
       use_image_if_no_bounding_boxes=True)
   bbox_begin, bbox_size, _ = sample_distorted_bounding_box
-  return bbox_begin, bbox_size
+  offset_y, offset_x, _ = tf.unstack(bbox_begin)
+  target_height, target_width, _ = tf.unstack(bbox_size)
+  image = tf.image.crop_to_bounding_box(
+      image, offset_y, offset_x, target_height, target_width)
+  return image

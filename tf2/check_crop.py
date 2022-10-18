@@ -30,34 +30,27 @@ tf_ymax = []
 tf_ymin = []
 tf_xmax = []
 tf_xmin = []
+tf_ratio = []
 
 pt_size = []
 pt_ymax = []
 pt_ymin = []
 pt_xmax = []
 pt_xmin = []
+pt_ratio = []
 # ================================================
 for i in range(2000):
-	bounding_boxes_tf = sample_box_tf(imarray_tf)
-	ymax = bounding_boxes_tf[1][1].numpy()
-	ymin = bounding_boxes_tf[0][1].numpy()
-	xmax = bounding_boxes_tf[1][0].numpy()
-	xmin = bounding_boxes_tf[0][0].numpy()
-	tf_size.append((xmax - xmin)*(ymax - ymin))
-	tf_ymax.append(ymax)
-	tf_ymin.append(ymin)
-	tf_xmax.append(xmax)
-	tf_xmin.append(xmin)
+	bounding_boxes_tf = sample_box_tf(imarray_tf.numpy())
+	tf_size.append(bounding_boxes_tf.shape[0]*bounding_boxes_tf.shape[1])
+	tf_ymax.append(bounding_boxes_tf.shape[1])
+	tf_xmax.append(bounding_boxes_tf.shape[0])
+	tf_ratio.append(bounding_boxes_tf.shape[0]/bounding_boxes_tf.shape[1])
 	bounding_boxes_pt = pt_crop.get_params(imarray_pt, pt_crop.scale, pt_crop.ratio)
-	ymax = bounding_boxes_pt[3]
-	ymin = bounding_boxes_pt[1]
-	xmax = bounding_boxes_pt[2]
-	xmin = bounding_boxes_pt[0]
-	pt_size.append((xmax - xmin)*(ymax - ymin))
-	pt_ymax.append(ymax)
-	pt_ymin.append(ymin)
-	pt_xmax.append(xmax)
-	pt_xmin.append(xmin)
+	im = F_t.crop(imarray_pt, bounding_boxes_pt[0], bounding_boxes_pt[1], bounding_boxes_pt[2], bounding_boxes_pt[3])
+	pt_size.append(im.shape[1]*im.shape[2])
+	pt_ymax.append(im.shape[2])
+	pt_xmax.append(im.shape[1])
+	pt_ratio.append(im.shape[1]/im.shape[2])
 
 print('size')
 print(np.mean(tf_size))
@@ -65,15 +58,37 @@ print(np.mean(pt_size))
 print('ymax')
 print(np.mean(tf_ymax))
 print(np.mean(pt_ymax))
-print('ymin')
-print(np.mean(tf_ymin))
-print(np.mean(pt_ymin))
 print('xmax')
 print(np.mean(tf_xmax))
 print(np.mean(pt_xmax))
-print('xmin')
-print(np.mean(tf_xmin))
-print(np.mean(pt_xmin))
+print('ratio')
+print(np.mean(tf_ratio))
+print(np.mean(pt_ratio))
 
+print('size')
+print(np.min(tf_size))
+print(np.min(pt_size))
+print('ymax')
+print(np.min(tf_ymax))
+print(np.min(pt_ymax))
+print('xmax')
+print(np.min(tf_xmax))
+print(np.min(pt_xmax))
+print('ratio')
+print(np.min(tf_ratio))
+print(np.min(pt_ratio))
+
+print('size')
+print(np.max(tf_size))
+print(np.max(pt_size))
+print('ymax')
+print(np.max(tf_ymax))
+print(np.max(pt_ymax))
+print('xmax')
+print(np.max(tf_xmax))
+print(np.max(pt_xmax))
+print('ratio')
+print(np.max(tf_ratio))
+print(np.max(pt_ratio))
 
 pb()
