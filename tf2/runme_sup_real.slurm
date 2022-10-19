@@ -15,10 +15,14 @@
 module load fosscuda/2020b
 module load tensorflow/2.6.0-python-3.8.6
 
-python run.py --mode=train_then_eval --train_mode=finetune --train_batch_size=512 --train_epochs=100 \
---fine_tune_after_block=-1 --zero_init_logits_layer=True --variable_schema='(?!global_step|(?:.*/|^)Momentum|head)' --global_bn=False \
---optimizer=momentum --learning_rate=0.1 --weight_decay=0.0 --warmup_epochs=0 \
---dataset=cifar10 --data_dir=data/cifar10 \
---image_size=32 --eval_split=test --resnet_depth=18 \
---checkpoint=cifar10_models/firsttry_real \
---model_dir=cifar10_models/finetune2  --use_tpu=False
+source ~/venvs/tf_gpu/bin/activate
+
+python run.py --mode=train_then_eval --train_mode=finetune \
+  --fine_tune_after_block=-1 --zero_init_logits_layer=True \
+  --optimizer=lars --learning_rate=0.005 \
+  --learning_rate_scaling=sqrt --weight_decay=0 --image_size=32  --resnet_depth=18  --global_bn=False \
+  --train_steps=1 --train_batch_size=1024 --warmup_epochs=0 \
+  --dataset=cifar10 --eval_split=test \
+  --data_dir=data/cifar10 --model_dir=cifar10_models/finetune12 --checkpoint=cifar10_models/firsttry_real/ckpt-585.index \
+  --use_tpu=False  \
+  --num_proj_layers=2 --ft_proj_selector=0
