@@ -228,10 +228,10 @@ class Conv2dFixedPadding(tf.keras.layers.Layer):  # pylint: disable=missing-docs
         strides=strides,
         padding=('SAME' if strides == 1 else 'VALID'),
         use_bias=False,
-        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=DiracInitializer(),
+        # kernel_initializer=DiracInitializer(),
         data_format=data_format)
 
   def call(self, inputs, training):
@@ -276,10 +276,10 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=mid_dim,
         kernel_size=1,
         strides=1,
-        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=DiracInitializer(),
+        # kernel_initializer=DiracInitializer(),
         use_bias=False,
         data_format=data_format)
     self.batch_norm_relu_1 = BatchNormRelu(data_format=data_format)
@@ -287,10 +287,10 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=2 * filters,
         kernel_size=1,
         strides=1,
-        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=DiracInitializer(),
+        # kernel_initializer=DiracInitializer(),
         use_bias=False,
         data_format=data_format)
 
@@ -325,10 +325,10 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         max(1, int(filters * se_ratio)),
         kernel_size=[1, 1],
         strides=[1, 1],
-        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=DiracInitializer(),
+        # kernel_initializer=DiracInitializer(),
         padding='same',
         data_format=data_format,
         use_bias=True)
@@ -336,10 +336,10 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         None,  # This is filled later in build().
         kernel_size=[1, 1],
         strides=[1, 1],
-        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=DiracInitializer(),
+        # kernel_initializer=DiracInitializer(),
         padding='same',
         data_format=data_format,
         use_bias=True)

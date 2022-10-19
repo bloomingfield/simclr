@@ -96,11 +96,11 @@ def add_contrastive_loss(hidden,
   loss_b = tf.nn.softmax_cross_entropy_with_logits(
       labels, tf.concat([logits_ba, logits_bb], 1))
   loss = tf.reduce_mean(loss_a + loss_b)
-  print('====================================')
-  print(loss)
-  print(tf.math.reduce_min(loss_a + loss_b))
-  print(tf.math.reduce_max(loss_a + loss_b))
-  pb()
+  # print('====================================')
+  # print(loss)
+  # print(tf.math.reduce_min(loss_a + loss_b))
+  # print(tf.math.reduce_max(loss_a + loss_b))
+  # pb()
   loss = tf.cast(loss, tf.float32)
 
   return loss, logits_ab, labels
