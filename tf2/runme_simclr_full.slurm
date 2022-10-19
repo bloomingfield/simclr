@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=6
 #SBATCH --time=11:59:59
-#SBATCH --output runme2.out
+#SBATCH --output runme3.out
 #SBATCH --open-mode=truncate
 #SBATCH --job-name=runme
 #SBATCH --mail-type=ALL
