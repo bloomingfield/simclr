@@ -274,7 +274,7 @@ def build_saved_model(model, include_projection_head=True):
       # a getter with the same name.
       self.trainable_variables_list = model.trainable_variables
 
-    # @tf.function
+    @tf.function
     def __call__(self, inputs, trainable):
       self.model(inputs, training=trainable)
       return get_salient_tensors_dict(include_projection_head)
@@ -388,7 +388,7 @@ def perform_evaluation(model, builder, eval_steps, ckpt, strategy, topology):
 
   with strategy.scope():
 
-    # @tf.function
+    @tf.function
     def run_single_step(iterator):
       images, labels = next(iterator)
       features, labels = images, {'labels': labels}
@@ -630,7 +630,7 @@ def main(argv):
 
     with strategy.scope():
 
-      # @tf.function
+      @tf.function
       def train_multiple_steps(iterator):
         # `tf.range` is needed so that this runs in a `tf.while_loop` and is
         # not unrolled.
@@ -684,7 +684,7 @@ if __name__ == '__main__':
   tf.compat.v1.enable_v2_behavior()
   # For outside compilation of summaries on TPU.
   tf.config.set_soft_device_placement(True)
-  os.environ["TF_DETERMINISTIC_OPS"] = "1"
+  # os.environ["TF_DETERMINISTIC_OPS"] = "1"
   tf.random.set_seed(1)
   # tf.data.experimental.enable_debug_mode()
   app.run(main)
