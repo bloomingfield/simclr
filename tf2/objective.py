@@ -58,7 +58,8 @@ def add_contrastive_loss(hidden,
   # np.random.seed(0)
   # imarray = np.random.rand(512,64).astype(dtype="float32")
   # hidden = tf.convert_to_tensor(imarray)
-  hidden = tf.cast(hidden, tf.double)
+  if False:
+    hidden = tf.cast(hidden, tf.double)
 
   if hidden_norm:
     hidden = tf.math.l2_normalize(hidden, -1)
@@ -101,7 +102,8 @@ def add_contrastive_loss(hidden,
   # print(tf.math.reduce_min(loss_a + loss_b))
   # print(tf.math.reduce_max(loss_a + loss_b))
   # pb()
-  loss = tf.cast(loss, tf.float32)
+  if False:
+    loss = tf.cast(loss, tf.float32)
 
   return loss, logits_ab, labels
 

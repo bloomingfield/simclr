@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=6
 #SBATCH --time=11:59:59
-#SBATCH --output runme.out
+#SBATCH --output runme2.out
 #SBATCH --open-mode=truncate
 #SBATCH --job-name=runme
 #SBATCH --mail-type=ALL
@@ -21,5 +21,5 @@ python run.py --train_mode=pretrain  --train_batch_size=256 --train_epochs=400  
 --learning_rate=0.2 --learning_rate_scaling=sqrt --proj_out_dim=64 --num_proj_layers=2 \
 --weight_decay=1e-4 --temperature=0.2   --dataset=cifar10 --data_dir=data/cifar10 \
 --image_size=32 --eval_split=test --resnet_depth=18   --use_blur=False --color_jitter_strength=0.5  \
---model_dir=cifar10_models/firsttry_real --use_tpu=False --cache_dataset=True
+--model_dir=cifar10_models/firsttry_real3 --use_tpu=False --cache_dataset=True
 
