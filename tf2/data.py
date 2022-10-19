@@ -24,7 +24,6 @@ import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
 from pdb import set_trace as pb
-import pydevd
 import numpy as np
 
 FLAGS = flags.FLAGS

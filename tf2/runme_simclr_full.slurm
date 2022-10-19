@@ -1,16 +1,18 @@
 #!/bin/bash
-#SBATCH --partition gpgpu
+#SBATCH --partition shortgpgpu
 #SBATCH --qos=gpgpuresplat
 
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=6
-#SBATCH --time=10:59:59
+#SBATCH --time=00:59:59
 #SBATCH --output runme.out
 #SBATCH --open-mode=truncate
 #SBATCH --job-name=runme
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=nathaniel.bloomfield@unimelb.edu.au
+
+source ~/venvs/tf_gpu/bin/activate
 
 module load fosscuda/2020b
 module load tensorflow/2.6.0-python-3.8.6
