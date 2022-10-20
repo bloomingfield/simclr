@@ -55,7 +55,8 @@ class DiracInitializer(tf.keras.initializers.Initializer):
   def get_config(self):  # To support serialization
     return {"groups": self.groups}
 
-
+# CONV_INIT = tf.keras.initializers.VarianceScaling()
+CONV_INIT = DiracInitializer()
 
 class BatchNormRelu(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
 
@@ -228,7 +229,8 @@ class Conv2dFixedPadding(tf.keras.layers.Layer):  # pylint: disable=missing-docs
         strides=strides,
         padding=('SAME' if strides == 1 else 'VALID'),
         use_bias=False,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=CONV_INIT,
+        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
         # kernel_initializer=DiracInitializer(),
@@ -276,7 +278,8 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=mid_dim,
         kernel_size=1,
         strides=1,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=CONV_INIT,
+        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
         # kernel_initializer=DiracInitializer(),
@@ -287,7 +290,8 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=2 * filters,
         kernel_size=1,
         strides=1,
-        kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=CONV_INIT,
+        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
         # kernel_initializer=DiracInitializer(),
@@ -325,7 +329,8 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         max(1, int(filters * se_ratio)),
         kernel_size=[1, 1],
         strides=[1, 1],
-        kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=CONV_INIT,
+        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
         # kernel_initializer=DiracInitializer(),
@@ -336,7 +341,8 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         None,  # This is filled later in build().
         kernel_size=[1, 1],
         strides=[1, 1],
-        kernel_initializer=tf.keras.initializers.VarianceScaling(),
+        kernel_initializer=CONV_INIT,
+        # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
         # kernel_initializer=DiracInitializer(),
@@ -835,6 +841,7 @@ def resnet(resnet_depth,
 
   params = model_params[resnet_depth]
   return Resnet(
+  # return ResnetMini(
       params['block'],
       params['layers'],
       width_multiplier,

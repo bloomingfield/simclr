@@ -208,7 +208,7 @@ flags.DEFINE_integer(
     '0 means no projection head, and -1 means the final layer.')
 
 flags.DEFINE_boolean(
-    'global_bn', True,
+    'global_bn', False,
     'Whether to aggregate BN statistics across distributed cores.')
 
 flags.DEFINE_integer(
@@ -686,5 +686,6 @@ if __name__ == '__main__':
   tf.config.set_soft_device_placement(True)
   # os.environ["TF_DETERMINISTIC_OPS"] = "1"
   tf.random.set_seed(1)
+  tf.keras.backend.set_floatx('float64')
   # tf.data.experimental.enable_debug_mode()
   app.run(main)

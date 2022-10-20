@@ -64,7 +64,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
     super(LARSOptimizer, self).__init__(name)
 
     self._set_hyper("learning_rate", learning_rate)
-    self.momentum = momentum
+    self.momentum = tf.cast(momentum, tf.float64)
     self.weight_decay = weight_decay
     self.use_nesterov = use_nesterov
     self.classic_momentum = classic_momentum
@@ -108,7 +108,6 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
             1.0)
       scaled_lr = learning_rate * trust_ratio
       # pb()
-
       next_v = tf.multiply(self.momentum, v) + scaled_lr * grad
       if self.use_nesterov:
         update = tf.multiply(self.momentum, next_v) + scaled_lr * grad

@@ -83,7 +83,7 @@ def add_contrastive_loss(hidden,
     hidden2_large = hidden2
     labels = tf.one_hot(tf.range(batch_size), batch_size * 2)
     masks = tf.one_hot(tf.range(batch_size), batch_size)
-  if False:
+  if True:
     masks = tf.cast(masks, tf.double)
   
   logits_aa = tf.matmul(hidden1, hidden1_large, transpose_b=True) / temperature
@@ -98,11 +98,11 @@ def add_contrastive_loss(hidden,
   loss_b = tf.nn.softmax_cross_entropy_with_logits(
       labels, tf.concat([logits_ba, logits_bb], 1))
   loss = tf.reduce_mean(loss_a + loss_b)
-  # print('====================================')
-  # print(loss)
-  # print(tf.math.reduce_min(loss_a + loss_b))
-  # print(tf.math.reduce_max(loss_a + loss_b))
-  # pb()
+  print('====================================')
+  print(loss.numpy())
+  print(tf.math.reduce_min(loss_a + loss_b).numpy())
+  print(tf.math.reduce_max(loss_a + loss_b).numpy())
+  pb()
   if False:
     loss = tf.cast(loss, tf.float32)
 

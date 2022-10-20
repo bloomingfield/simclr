@@ -129,7 +129,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       #   shuffle_files=is_training, as_supervised=True) # shuffle_files=is_training, as_supervised=True
       dataset = builder.as_dataset(
         split=FLAGS.train_split if is_training else FLAGS.eval_split,
-        shuffle_files=is_training,
+        shuffle_files=is_training, #is_training
         as_supervised=True,
         # Passing the input_context to TFDS makes TFDS read different parts
         # of the dataset on different workers. We also adjust the interleave
@@ -148,7 +148,7 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       options.experimental_slack = True
       dataset = dataset.with_options(options)
       buffer_multiplier = 50 if FLAGS.image_size <= 32 else 10
-      dataset = dataset.shuffle(batch_size * buffer_multiplier)
+      # dataset = dataset.shuffle(batch_size * buffer_multiplier)
       dataset = dataset.repeat(-1)
     dataset = dataset.map(map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE) # , num_parallel_calls=tf.data.experimental.AUTOTUNE
     dataset = dataset.batch(batch_size, drop_remainder=is_training)
