@@ -243,6 +243,11 @@ flags.DEFINE_boolean(
     'deterministic', True,
     'Whether or not to use Gaussian blur for augmentation during pretraining.')
 
+flags.DEFINE_boolean(
+    'image_augmentations', True,
+    'Whether or not to use Gaussian blur for augmentation during pretraining.')
+
+
 def get_salient_tensors_dict(include_projection_head):
   """Returns a dictionary of tensors."""
   graph = tf.compat.v1.get_default_graph()

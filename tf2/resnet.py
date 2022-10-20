@@ -58,10 +58,14 @@ class DiracInitializer(tf.keras.initializers.Initializer):
 
 # CONV_INIT = tf.keras.initializers.VarianceScaling()
 # CONV_INIT = DiracInitializer()
-if FLAGS.deterministic:
-  CONV_INIT = tf.keras.initializers.Constant(value=0.01)
-else:
-  CONV_INIT = tf.keras.initializers.VarianceScaling()
+
+def get_conv_init(deterministic): # FLAGS.deterministic
+  if deterministic:
+    CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+  else:
+    CONV_INIT = tf.keras.initializers.VarianceScaling()
+  return CONV_INIT
+
 
 class BatchNormRelu(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
 
@@ -228,13 +232,14 @@ class Conv2dFixedPadding(tf.keras.layers.Layer):  # pylint: disable=missing-docs
       self.fixed_padding = FixedPadding(kernel_size, data_format=data_format)
     else:
       self.fixed_padding = None
+
     self.conv2d = tf.keras.layers.Conv2D(
         filters=filters,
         kernel_size=kernel_size,
         strides=strides,
         padding=('SAME' if strides == 1 else 'VALID'),
         use_bias=False,
-        kernel_initializer=CONV_INIT,
+        kernel_initializer=get_conv_init(FLAGS.deterministic),
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
@@ -283,7 +288,7 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=mid_dim,
         kernel_size=1,
         strides=1,
-        kernel_initializer=CONV_INIT,
+        kernel_initializer=get_conv_init(FLAGS.deterministic),
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
@@ -295,7 +300,7 @@ class SK_Conv2D(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         filters=2 * filters,
         kernel_size=1,
         strides=1,
-        kernel_initializer=CONV_INIT,
+        kernel_initializer=get_conv_init(FLAGS.deterministic),
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
@@ -334,7 +339,7 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         max(1, int(filters * se_ratio)),
         kernel_size=[1, 1],
         strides=[1, 1],
-        kernel_initializer=CONV_INIT,
+        kernel_initializer=get_conv_init(FLAGS.deterministic),
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
@@ -346,7 +351,7 @@ class SE_Layer(tf.keras.layers.Layer):  # pylint: disable=invalid-name
         None,  # This is filled later in build().
         kernel_size=[1, 1],
         strides=[1, 1],
-        kernel_initializer=CONV_INIT,
+        kernel_initializer=get_conv_init(FLAGS.deterministic),
         # kernel_initializer=tf.keras.initializers.VarianceScaling(),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),

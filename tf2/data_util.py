@@ -467,13 +467,13 @@ def preprocess_for_train(image,
   Returns:
     A preprocessed image `Tensor`.
   """
-  if not FLAGS.deterministic:
+  if  FLAGS.image_augmentations:
     if crop:
       image = random_crop_with_resize(image, height, width)
-  if not FLAGS.deterministic:
+  if  FLAGS.image_augmentations:
     if flip:
       image = tf.image.random_flip_left_right(image)
-  if not FLAGS.deterministic:
+  if  FLAGS.image_augmentations:
     if color_distort:
       image = random_color_jitter(image, strength=FLAGS.color_jitter_strength,
                                   impl=impl)
@@ -494,7 +494,7 @@ def preprocess_for_eval(image, height, width, crop=True):
   Returns:
     A preprocessed image `Tensor`.
   """
-  if  not FLAGS.deterministic:
+  if  FLAGS.image_augmentations:
     if crop:
       image = center_crop(image, height, width, crop_proportion=CROP_PROPORTION)
   image = tf.reshape(image, [height, width, 3])
