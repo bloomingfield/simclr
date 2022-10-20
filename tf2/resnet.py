@@ -56,8 +56,8 @@ class DiracInitializer(tf.keras.initializers.Initializer):
     return {"groups": self.groups}
 
 # CONV_INIT = tf.keras.initializers.VarianceScaling()
-CONV_INIT = DiracInitializer()
-# CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+# CONV_INIT = DiracInitializer()
+CONV_INIT = tf.keras.initializers.Constant(value=0.01)
 
 class BatchNormRelu(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
 
@@ -430,7 +430,7 @@ class ResidualBlock(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
     if FLAGS.se_ratio > 0:
       inputs = self.se_layer(inputs, training=training)
 
-    return tf.nn.relu(inputs + shortcut)
+    return tf.nn.relu(0*inputs + shortcut)
 
 
 class BottleneckBlock(tf.keras.layers.Layer):
@@ -865,8 +865,8 @@ def resnet(resnet_depth,
     raise ValueError('Not a valid resnet_depth:', resnet_depth)
 
   params = model_params[resnet_depth]
-  # return Resnet(
-  return ResnetMini(
+  return Resnet(
+  # return ResnetMini(
       params['block'],
       params['layers'],
       width_multiplier,
