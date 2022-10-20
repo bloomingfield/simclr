@@ -15,6 +15,10 @@
 # ==============================================================================
 """Functions and classes related to optimization (weight updates)."""
 
+
+from absl import flags
+FLAGS = flags.FLAGS
+
 import re
 
 import tensorflow.compat.v2 as tf
@@ -65,7 +69,10 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
     super(LARSOptimizer, self).__init__(name)
 
     self._set_hyper("learning_rate", learning_rate)
-    self.momentum = tf.cast(momentum, tf.float64)
+    if FLAGS.deterministic:
+      self.momentum = tf.cast(momentum, tf.float64)
+    else:
+      self.momentum = momentum
     self.weight_decay = weight_decay
     self.use_nesterov = use_nesterov
     self.classic_momentum = classic_momentum
