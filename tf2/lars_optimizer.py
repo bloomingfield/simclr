@@ -43,7 +43,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
                exclude_from_layer_adaptation=None,
                classic_momentum=True,
                eeta=EETA_DEFAULT,
-               division_by_zero_thresh=1e-10,
+               division_by_zero_thresh=0.0,
                name="LARSOptimizer"):
     """Constructs a LARSOptimizer.
 
