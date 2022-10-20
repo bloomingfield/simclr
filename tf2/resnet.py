@@ -787,8 +787,32 @@ class ResnetMini(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
       self.initial_conv_relu_max_pool.append(
           IdentityLayer(name='initial_max_pool', trainable=trainable))
 
+    self.block_groups = []
+    # TODO(srbs): This impl is different from the original one in the case where
+    # fine_tune_after_block != 4. In that case earlier BN stats were getting
+    # updated. Now they will not be. Check with Ting to make sure this is ok.
+    if FLAGS.train_mode == 'finetune' and FLAGS.fine_tune_after_block == 0:
+      trainable = True
+
+    self.block_groups.append(
+        BlockGroup(
+            filters=64 * width_multiplier,
+            block_fn=block_fn,
+            blocks=layers[0],
+            strides=1,
+            name='block_group1',
+            data_format=data_format,
+            dropblock_keep_prob=dropblock_keep_probs[0],
+            dropblock_size=dropblock_size,
+            trainable=trainable))
+
   def call(self, inputs, training):
     for layer in self.initial_conv_relu_max_pool:
+      inputs = layer(inputs, training=training)
+
+    for i, layer in enumerate(self.block_groups):
+      if FLAGS.train_mode == 'finetune' and FLAGS.fine_tune_after_block == i:
+        inputs = tf.stop_gradient(inputs)
       inputs = layer(inputs, training=training)
 
     if self.data_format == 'channels_last':
@@ -840,8 +864,8 @@ def resnet(resnet_depth,
     raise ValueError('Not a valid resnet_depth:', resnet_depth)
 
   params = model_params[resnet_depth]
-  return Resnet(
-  # return ResnetMini(
+  # return Resnet(
+  return ResnetMini(
       params['block'],
       params['layers'],
       width_multiplier,
