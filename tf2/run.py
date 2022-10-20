@@ -240,6 +240,10 @@ flags.DEFINE_boolean(
     'Whether or not to use Gaussian blur for augmentation during pretraining.')
 
 
+flags.DEFINE_boolean(
+    'deterministic', True,
+    'Whether or not to use Gaussian blur for augmentation during pretraining.')
+
 def get_salient_tensors_dict(include_projection_head):
   """Returns a dictionary of tensors."""
   graph = tf.compat.v1.get_default_graph()
@@ -469,6 +473,11 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
 
+  if FLAGS.deterministic:
+      tf.config.set_soft_device_placement(True)
+      os.environ["TF_DETERMINISTIC_OPS"] = "1"
+      tf.keras.backend.set_floatx('float64')
+      tf.random.set_seed(1)
 
   builder = tfds.builder(FLAGS.dataset, data_dir=FLAGS.data_dir)
   builder.download_and_prepare()
@@ -684,9 +693,5 @@ def main(argv):
 if __name__ == '__main__':
   tf.compat.v1.enable_v2_behavior()
   # For outside compilation of summaries on TPU.
-  tf.config.set_soft_device_placement(True)
-  os.environ["TF_DETERMINISTIC_OPS"] = "1"
-  tf.random.set_seed(1)
-  tf.keras.backend.set_floatx('float64')
   # tf.data.experimental.enable_debug_mode()
   app.run(main)

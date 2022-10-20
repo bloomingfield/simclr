@@ -148,7 +148,8 @@ def build_input_fn(builder, global_batch_size, topology, is_training):
       options.experimental_slack = True
       dataset = dataset.with_options(options)
       buffer_multiplier = 50 if FLAGS.image_size <= 32 else 10
-      # dataset = dataset.shuffle(batch_size * buffer_multiplier)
+      if not FLAGS.deterministic:
+        dataset = dataset.shuffle(batch_size * buffer_multiplier)
       dataset = dataset.repeat(-1)
     dataset = dataset.map(map_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE) # , num_parallel_calls=tf.data.experimental.AUTOTUNE
     dataset = dataset.batch(batch_size, drop_remainder=is_training)
