@@ -39,6 +39,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
                exclude_from_layer_adaptation=None,
                classic_momentum=True,
                eeta=EETA_DEFAULT,
+               division_by_zero_thresh=1e-10,
                name="LARSOptimizer"):
     """Constructs a LARSOptimizer.
 
@@ -69,6 +70,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
     self.use_nesterov = use_nesterov
     self.classic_momentum = classic_momentum
     self.eeta = eeta
+    self.division_by_zero_thresh = division_by_zero_thresh
     self.exclude_from_weight_decay = exclude_from_weight_decay
     # exclude_from_layer_adaptation is set to exclude_from_weight_decay if the
     # arg is None.
@@ -103,16 +105,18 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
         w_norm = tf.norm(param, ord=2)
         g_norm = tf.norm(grad, ord=2)
         trust_ratio = tf.where(
-            tf.greater(w_norm, 0),
-            tf.where(tf.greater(g_norm, 0), (self.eeta * w_norm / g_norm), 1.0),
+            tf.greater(w_norm, self.division_by_zero_thresh),
+            tf.where(tf.greater(g_norm, self.division_by_zero_thresh), (self.eeta * w_norm / g_norm), 1.0),
             1.0)
       scaled_lr = learning_rate * trust_ratio
-      # pb()
       next_v = tf.multiply(self.momentum, v) + scaled_lr * grad
       if self.use_nesterov:
         update = tf.multiply(self.momentum, next_v) + scaled_lr * grad
       else:
         update = next_v
+      # print(update.shape)
+      # print(tf.math.reduce_mean(tf.math.abs(update)))
+      # pb()
       next_param = param - update
     else:
       next_v = tf.multiply(self.momentum, v) + grad
