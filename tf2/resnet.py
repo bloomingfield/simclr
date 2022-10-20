@@ -58,7 +58,10 @@ class DiracInitializer(tf.keras.initializers.Initializer):
 
 # CONV_INIT = tf.keras.initializers.VarianceScaling()
 # CONV_INIT = DiracInitializer()
-CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+if FLAGS.deterministic:
+  CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+else:
+  CONV_INIT = tf.keras.initializers.VarianceScaling()
 
 class BatchNormRelu(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
 

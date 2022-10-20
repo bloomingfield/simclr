@@ -239,7 +239,6 @@ flags.DEFINE_boolean(
     'use_blur', True,
     'Whether or not to use Gaussian blur for augmentation during pretraining.')
 
-
 flags.DEFINE_boolean(
     'deterministic', True,
     'Whether or not to use Gaussian blur for augmentation during pretraining.')

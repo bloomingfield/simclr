@@ -143,12 +143,16 @@ class LinearLayer(tf.keras.layers.Layer):
       num_classes = self.num_classes(input_shape)
     else:
       num_classes = self.num_classes
+    if FLAGS.deterministic:
+      init = tf.keras.initializers.Identity()
+    else:
+      init = tf.keras.initializers.RandomNormal(stddev=0.01)
     self.dense = tf.keras.layers.Dense(
         num_classes,
         # kernel_initializer=tf.keras.initializers.RandomNormal(stddev=0.01),
         # kernel_initializer=tf.keras.initializers.Ones(),
         # kernel_initializer=tf.keras.initializers.Constant(value=0.01),
-        kernel_initializer=tf.keras.initializers.Identity(),
+        kernel_initializer=init,
         use_bias=self.use_bias and not self.use_bn)
     super(LinearLayer, self).build(input_shape)
 
