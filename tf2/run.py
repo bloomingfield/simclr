@@ -478,7 +478,6 @@ def main(argv):
     raise app.UsageError('Too many command-line arguments.')
 
   if FLAGS.deterministic:
-      tf.config.set_soft_device_placement(True)
       os.environ["TF_DETERMINISTIC_OPS"] = "1"
       tf.keras.backend.set_floatx('float64')
       tf.random.set_seed(1)
@@ -696,7 +695,9 @@ def main(argv):
 
 if __name__ == '__main__':
   tf.compat.v1.enable_v2_behavior()
+  # tf.random.set_seed(1)
+  tf.config.set_soft_device_placement(True)
   # tf.config.run_functions_eagerly(True)
-  # For outside compilation of summaries on TPU.
   # tf.data.experimental.enable_debug_mode()
+  # For outside compilation of summaries on TPU.
   app.run(main)
