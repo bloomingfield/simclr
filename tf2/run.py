@@ -568,6 +568,7 @@ def main(argv):
 
     steps_per_loop = checkpoint_steps
 
+    @tf.function
     def single_step(features, labels):
       with tf.GradientTape() as tape:
         # Log summaries on the last step of the training loop to match
