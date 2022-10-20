@@ -575,6 +575,7 @@ def main(argv):
         with tf.summary.record_if(should_record):
           # Only log augmented images for the first tower.
           tf.summary.image('image', features[:, :, :, :3], step=optimizer.iterations + 1)
+        # pb()
         projection_head_outputs, supervised_head_outputs = model(
             features, training=True)
         loss = None
@@ -684,7 +685,7 @@ if __name__ == '__main__':
   tf.compat.v1.enable_v2_behavior()
   # For outside compilation of summaries on TPU.
   tf.config.set_soft_device_placement(True)
-  # os.environ["TF_DETERMINISTIC_OPS"] = "1"
+  os.environ["TF_DETERMINISTIC_OPS"] = "1"
   tf.random.set_seed(1)
   tf.keras.backend.set_floatx('float64')
   # tf.data.experimental.enable_debug_mode()
