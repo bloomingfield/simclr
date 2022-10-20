@@ -32,9 +32,9 @@ class DiracInitializer(tf.keras.initializers.Initializer):
 
   def __init__(self, groups=1):
     self.groups = groups
-
+# .permute(3, 2, 0, 1)
   def __call__(self, shape, dtype=None, **kwargs):
-    shape = tuple(reversed(shape))
+    shape = (shape[3], shape[2], shape[0], shape[1])
     dimensions = len(shape)
     out_chans_per_grp = shape[0] // self.groups
     min_dim = min(out_chans_per_grp, shape[1])
@@ -48,7 +48,8 @@ class DiracInitializer(tf.keras.initializers.Initializer):
         else:  # Volumetric convolution
             tensor[g * out_chans_per_grp + d, d, tensor.shape(2) // 2,
                    tensor.shape[3] // 2, tensor.shape[4] // 2] = 1
-    tensor = tensor.transpose()
+    
+    tensor = np.transpose(tensor, (2, 3, 1, 0))
     tensor = tf.convert_to_tensor(tensor, dtype=dtype)
     return tensor
 
@@ -430,7 +431,7 @@ class ResidualBlock(tf.keras.layers.Layer):  # pylint: disable=missing-docstring
     if FLAGS.se_ratio > 0:
       inputs = self.se_layer(inputs, training=training)
 
-    return tf.nn.relu(0*inputs + shortcut)
+    return tf.nn.relu(inputs + shortcut)
 
 
 class BottleneckBlock(tf.keras.layers.Layer):
