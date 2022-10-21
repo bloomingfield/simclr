@@ -23,7 +23,7 @@ python run.py --mode=train_then_eval --train_mode=finetune \
   --learning_rate_scaling=sqrt --weight_decay=0 --image_size=32  --resnet_depth=18  --global_bn=False \
   --train_steps=5 --train_batch_size=1024 --warmup_epochs=0 \
   --dataset=cifar10 --eval_split=test \
-  --data_dir=data/cifar10 --model_dir=cifar10_models/finetune2 --checkpoint=cifar10_models/firsttry_real3/ckpt-78195 \
+  --data_dir=data/cifar10 --model_dir=cifar10_models/finetune3_2 --checkpoint=cifar10_models/firsttry_real3_2/ckpt-78195 \
   --use_tpu=False   \
   --num_proj_layers=2 --ft_proj_selector=0 \
   --deterministic=False --image_augmentations=True  --proj_out_dim=64 

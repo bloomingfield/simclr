@@ -17,10 +17,11 @@ module load tensorflow/2.6.0-python-3.8.6
 
 python run.py --mode=train_then_eval --train_mode=finetune \
   --fine_tune_after_block=-1 --zero_init_logits_layer=True \
-  --optimizer=lars --learning_rate=0.03125 \
-  --learning_rate_scaling=sqrt --weight_decay=0.1 --image_size=32  --resnet_depth=18  --global_bn=False --use_blur=False \
-  --train_steps=10 --train_batch_size=1024 --eval_batch_size=1024 --warmup_epochs=0 \
+  --optimizer=lars --learning_rate=0.005 \
+  --learning_rate_scaling=sqrt --weight_decay=0 --image_size=32  --resnet_depth=18  --global_bn=False \
+  --train_steps=5 --train_batch_size=1024 --warmup_epochs=0 \
   --dataset=cifar10 --eval_split=test \
-  --data_dir=data/cifar10 --model_dir=cifar10_models/sup \
-  --use_tpu=False \
-  --num_proj_layers=2 --ft_proj_selector=0
+  --data_dir=data/cifar10 --model_dir=cifar10_models/finetune10 --checkpoint=cifar10_models/firsttry_real3_2/ckpt-78195 \
+  --use_tpu=False   \
+  --num_proj_layers=2 --ft_proj_selector=0 \
+  --deterministic=False --image_augmentations=True  --proj_out_dim=64 

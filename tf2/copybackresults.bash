@@ -1,5 +1,5 @@
 
-rsync -avzh --exclude 'logs' --exclude '.git' --exclude '__pycache__' nbloomfield@spartan.hpc.unimelb.edu.au:/data/cephfs/punim0980/simclr_tf2/cifar10_models . 
+rsync -avzh --exclude 'logs' --exclude '.git' --exclude '__pycache__' --exclude 'ckpt' nbloomfield@spartan.hpc.unimelb.edu.au:/data/cephfs/punim0980/simclr_tf2/cifar10_models . 
 # rm staging/*
 
 # rsync -avzh --exclude 'logs' --exclude '.git' --exclude '__pycache__' nbloomfield@spartan.hpc.unimelb.edu.au:/data/cephfs/punim0980/simclr/tf2/runme.out . 

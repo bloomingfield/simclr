@@ -338,6 +338,8 @@ def try_restore_from_checkpoint(model, global_step, optimizer):
     checkpoint_manager2.checkpoint.restore(FLAGS.checkpoint).expect_partial()
     if FLAGS.zero_init_logits_layer:
       model = checkpoint_manager2.checkpoint.model
+      test_image = np.random.random((1, 32, 32, 3))
+      model(test_image) # need to do this to initialise weights
       output_layer_parameters = model.supervised_head.trainable_weights
       logging.info('Initializing output layer parameters %s to zero',
                    [x.op.name for x in output_layer_parameters])
