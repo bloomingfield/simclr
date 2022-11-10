@@ -101,7 +101,7 @@ class WarmUpAndCosineDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
             FLAGS.learning_rate_scaling))
       learning_rate = (
           step / float(warmup_steps) * scaled_lr if warmup_steps else scaled_lr)
-
+          
       # Cosine decay learning rate schedule
       total_steps = get_train_steps(self.num_examples)
       # TODO(srbs): Cache this object.
@@ -270,7 +270,6 @@ class Model(tf.keras.models.Model):
                                                   FLAGS.image_size,
                                                   FLAGS.image_size)
     features = tf.concat(features_list, 0)  # (num_transforms * bsz, h, w, c)
-
     # # ========================================
     # tf.summary.image("example images", features[:2], step=0)
     # # ========================================
@@ -280,7 +279,6 @@ class Model(tf.keras.models.Model):
     hiddens = self.resnet_model(features, training=training)
     # Add heads.
     projection_head_outputs, supervised_head_inputs = self._projection_head(hiddens, training)
-
     if FLAGS.train_mode == 'finetune':
       supervised_head_outputs = self.supervised_head(supervised_head_inputs,
                                                      training)

@@ -43,7 +43,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
                exclude_from_layer_adaptation=None,
                classic_momentum=True,
                eeta=EETA_DEFAULT,
-               division_by_zero_thresh=0.0,
+               division_by_zero_thresh=1e-10,
                name="LARSOptimizer"):
     """Constructs a LARSOptimizer.
 
@@ -109,6 +109,7 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
     if self.classic_momentum:
       trust_ratio = 1.0
       if self._do_layer_adaptation(param_name):
+        # pb()
         w_norm = tf.norm(param, ord=2)
         g_norm = tf.norm(grad, ord=2)
         trust_ratio = tf.where(
@@ -137,10 +138,11 @@ class LARSOptimizer(tf.keras.optimizers.Optimizer):
         w_norm = tf.norm(param, ord=2)
         v_norm = tf.norm(update, ord=2)
         trust_ratio = tf.where(
-            tf.greater(w_norm, 0),
-            tf.where(tf.greater(v_norm, 0), (self.eeta * w_norm / v_norm), 1.0),
+            tf.greater(w_norm, self.division_by_zero_thresh),
+            tf.where(tf.greater(v_norm, self.division_by_zero_thresh), (self.eeta * w_norm / v_norm), 1.0),
             1.0)
       scaled_lr = trust_ratio * learning_rate
+
       next_param = param - scaled_lr * update
 
     return tf.group(*[

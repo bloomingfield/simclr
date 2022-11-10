@@ -282,7 +282,7 @@ def build_saved_model(model, include_projection_head=True):
       # a getter with the same name.
       self.trainable_variables_list = model.trainable_variables
 
-    @tf.function
+    # @tf.function
     def __call__(self, inputs, trainable):
       self.model(inputs, training=trainable)
       return get_salient_tensors_dict(include_projection_head)
@@ -398,7 +398,7 @@ def perform_evaluation(model, builder, eval_steps, ckpt, strategy, topology):
 
   with strategy.scope():
 
-    @tf.function
+    # @tf.function
     def run_single_step(iterator):
       images, labels = next(iterator)
       features, labels = images, {'labels': labels}
@@ -480,7 +480,7 @@ def main(argv):
     raise app.UsageError('Too many command-line arguments.')
 
   if FLAGS.deterministic:
-      os.environ["TF_DETERMINISTIC_OPS"] = "1"
+      # os.environ["TF_DETERMINISTIC_OPS"] = "1"
       tf.keras.backend.set_floatx('float64')
       tf.random.set_seed(1)
 
@@ -570,7 +570,7 @@ def main(argv):
 
     steps_per_loop = checkpoint_steps
 
-    @tf.function
+    # @tf.function
     def single_step(features, labels):
       with tf.GradientTape() as tape:
         # Log summaries on the last step of the training loop to match
@@ -590,7 +590,7 @@ def main(argv):
         with tf.summary.record_if(should_record):
           # Only log augmented images for the first tower.
           tf.summary.image('image', features[:, :, :, :3], step=optimizer.iterations + 1)
-        # pb()
+        
         projection_head_outputs, supervised_head_outputs = model(
             features, training=True)
         # pb()
@@ -611,6 +611,7 @@ def main(argv):
                                                 contrast_entropy_metric,
                                                 con_loss, logits_con,
                                                 labels_con)
+
         if supervised_head_outputs is not None:
           outputs = supervised_head_outputs
           l = labels['labels']
@@ -618,7 +619,7 @@ def main(argv):
             l = tf.concat([l, l], 0)
           sup_loss = obj_lib.add_supervised_loss(labels=l, logits=outputs)
           # np.argmax(labels['labels'].numpy(), axis=1)
-          # pb()
+          
           
           if loss is None:
             loss = sup_loss
@@ -631,8 +632,9 @@ def main(argv):
         weight_decay = model_lib.add_weight_decay(
             model, adjust_per_optimizer=True)
         weight_decay_metric.update_state(weight_decay)
-        
+        pb()
         loss += weight_decay
+
         total_loss_metric.update_state(loss)
         # The default behavior of `apply_gradients` is to sum gradients from all
         # replicas so we divide the loss by the number of replicas so that the
@@ -647,7 +649,7 @@ def main(argv):
 
     with strategy.scope():
 
-      @tf.function
+      # @tf.function
       def train_multiple_steps(iterator):
         # `tf.range` is needed so that this runs in a `tf.while_loop` and is
         # not unrolled.
@@ -698,6 +700,7 @@ def main(argv):
 
 
 if __name__ == '__main__':
+  tf.keras.backend.set_floatx('float64')
   tf.compat.v1.enable_v2_behavior()
   # tf.random.set_seed(1)
   tf.config.set_soft_device_placement(True)

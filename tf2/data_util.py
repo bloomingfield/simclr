@@ -28,6 +28,7 @@ CROP_PROPORTION = 0.875  # Standard for ImageNet.
 
 def random_apply(func, p, x):
   """Randomly apply function func to x with probability p."""
+  # pb()
   return tf.cond(
       tf.less(
           tf.random.uniform([], minval=0, maxval=1, dtype=tf.float32),
@@ -39,6 +40,7 @@ def random_brightness(image, max_delta, impl='simclrv2'):
   if impl == 'simclrv2':
     factor = tf.random.uniform([], tf.maximum(1.0 - max_delta, 0),
                                1.0 + max_delta)
+    # pb()
     image = image * factor
   elif impl == 'simclrv1':
     image = tf.image.random_brightness(image, max_delta=max_delta)
@@ -144,33 +146,38 @@ def color_jitter_rand(image,
     def apply_transform(i, x):
       """Apply the i-th transformation."""
       def brightness_foo():
+        # pb()
         if brightness == 0:
           return x
         else:
           return random_brightness(x, max_delta=brightness, impl=impl)
 
       def contrast_foo():
+        # pb()
         if contrast == 0:
           return x
         else:
-          return tf.image.random_contrast(x, lower=1-contrast, upper=1+contrast)
+          return tf.image.random_contrast(x, lower=1-contrast, upper=1+contrast, seed=1)
       def saturation_foo():
+        # pb()
         if saturation == 0:
           return x
         else:
           return tf.image.random_saturation(
-              x, lower=1-saturation, upper=1+saturation)
+              x, lower=1-saturation, upper=1+saturation, seed=1)
       def hue_foo():
+        # pb()
         if hue == 0:
           return x
         else:
-          return tf.image.random_hue(x, max_delta=hue)
+          return tf.image.random_hue(x, max_delta=hue, seed=1)
       x = tf.cond(tf.less(i, 2),
                   lambda: tf.cond(tf.less(i, 1), brightness_foo, contrast_foo),
                   lambda: tf.cond(tf.less(i, 3), saturation_foo, hue_foo))
       return x
 
     perm = tf.random.shuffle(tf.range(4))
+    # pb()
     for i in range(4):
       image = apply_transform(perm[i], image)
       image = tf.clip_by_value(image, 0., 1.)
@@ -282,6 +289,7 @@ def distorted_bounding_box_crop(image,
     shape = tf.shape(image)
     sample_distorted_bounding_box = tf.image.sample_distorted_bounding_box(
         shape,
+        seed=1,
         bounding_boxes=bbox,
         min_object_covered=min_object_covered,
         aspect_ratio_range=aspect_ratio_range,
@@ -467,16 +475,16 @@ def preprocess_for_train(image,
   Returns:
     A preprocessed image `Tensor`.
   """
+  tf.random.set_seed(0)
   if  FLAGS.image_augmentations:
     if crop:
       image = random_crop_with_resize(image, height, width)
   if  FLAGS.image_augmentations:
     if flip:
-      image = tf.image.random_flip_left_right(image)
+      image = tf.image.random_flip_left_right(image, seed=1)
   if  FLAGS.image_augmentations:
     if color_distort:
-      image = random_color_jitter(image, strength=FLAGS.color_jitter_strength,
-                                  impl=impl)
+      image = random_color_jitter(image, strength=FLAGS.color_jitter_strength, impl=impl)
   image = tf.reshape(image, [height, width, 3])
   image = tf.clip_by_value(image, 0., 1.)
   return image

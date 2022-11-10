@@ -61,7 +61,8 @@ class DiracInitializer(tf.keras.initializers.Initializer):
 
 def get_conv_init(deterministic): # FLAGS.deterministic
   if deterministic:
-    CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+    # CONV_INIT = tf.keras.initializers.Constant(value=0.01)
+    CONV_INIT = DiracInitializer()
   else:
     CONV_INIT = tf.keras.initializers.VarianceScaling()
   return CONV_INIT
@@ -874,8 +875,8 @@ def resnet(resnet_depth,
     raise ValueError('Not a valid resnet_depth:', resnet_depth)
 
   params = model_params[resnet_depth]
-  return Resnet(
-  # return ResnetMini(
+  # return Resnet(
+  return ResnetMini(
       params['block'],
       params['layers'],
       width_multiplier,
